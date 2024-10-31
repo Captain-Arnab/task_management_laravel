@@ -1,66 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Task Management Module
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Task Management module built with Laravel, featuring CRUD functionality, search, sorting, and drag-and-drop ordering for tasks. This README provides an overview of the project structure, setup instructions, and how to run the application.
 
-## About Laravel
+## Project Structure
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The project is organized as follows:
+```
+TaskManagement/
+├── app/
+│   ├── Console/
+│   ├── Exceptions/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── TaskController.php  # Handles task CRUD logic, search, sorting, reordering
+│   │   ├── Middleware/
+│   ├── Models/
+│   │   └── Task.php                # The Task model represents tasks in the database
+│   ├── Providers/
+│   ├── ...
+│
+├── bootstrap/
+├── config/
+│   └── database.php                # Database configuration according to connection type
+├── database/
+│   ├── migrations/
+│   │   └── 2024_10_31_035133_create_tasks_table  # Migration to create the tasks table
+│   │   └── 2024_10_31_044057_add_priority_to_tasks_table # To create a migration file that will add the priority column
+│   ├── seeders/
+├── public/
+│   └── index.php                   # Entry point for the application
+├── resources/
+│   ├── views/
+│   │   └── tasks/
+│   │       ├── index.blade.php     # Displays the list of tasks with drag-and-drop ordering
+│   │       ├── create.blade.php    # Form for adding a new task
+│   │       ├── edit.blade.php      # Form for editing an existing task
+│   ├── css/
+│   ├── js/
+├── routes/
+│   └── web.php                     # Defines routes, including the tasks routes
+├── storage/
+├── tests/
+├── vendor/
+├── .env                             # Environment settings (e.g., database configuration)
+├── composer.json                    # Lists dependencies for the Laravel project
+├── artisan                          # Command-line tool for Laravel tasks
+└── ...
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Project Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Follow these steps to set up the project on your local machine:
 
-## Learning Laravel
+### Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP (version >= 7.3)
+- Composer
+- Laravel (version >= 8.x)
+- A database (MySQL, PostgreSQL, etc.)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone the repository :
 
-## Laravel Sponsors
+   ```
+   git clone https://github.com/Captain-Arnab/task_management_laravel.git
+   ```
+2. Install dependencies :
+Run the following command to install the required packages:
+```
+composer install
+```
+3. Run Migrations :
+Apply the database migrations to create the necessary tables.
+```
+php artisan migrate
+```
+4. Running the Application :
+```
+php artisan serve
+```
+The application will be accessible at 
+```
+http://localhost:8000/tasks
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
