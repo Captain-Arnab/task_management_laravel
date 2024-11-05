@@ -4,41 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class TaskController extends Controller
 {
-    public function index(Request $request)
+    // Displays the initial view for tasks with DataTables
+    public function index()
     {
-        // Start with a query on the Task model
-        $tasks = Task::query();
-    
-        // Apply default sorting by priority
-        $tasks->orderBy('priority', 'asc');
-    
-        // Optional sorting by any specified column (e.g., by title or due date)
-        if ($request->filled('sort_by')) {
-            $tasks->orderBy($request->input('sort_by'), $request->input('sort_direction', 'asc'));
-        }
-    
-        // Apply search filter if search term is provided
-        if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
-            $tasks->where('title', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('status', 'like', '%' . $searchTerm . '%');
-        }
-    
-        // Use pagination to manage the list display
-        $tasks = $tasks->paginate(10);
-    
-        return view('tasks.index', ['tasks' => $tasks]);
+        return view('tasks.index');
     }
     
-
+    // Returns JSON data for DataTables with server-side processing
+    public function getData(Request $request)
+    {
+        $query = Task::query();
+    
+        // Apply search filter if a search term is provided
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('status', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('due_date', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('priority', 'like', '%' . $searchTerm . '%');
+            });
+        }
+    
+        // Apply sorting based on column and direction specified by DataTables
+        if ($request->filled('order.0.column')) {
+            $columns = ['priority', 'title', 'due_date', 'status'];
+            $columnIndex = $request->input('order.0.column');
+            $sortDirection = $request->input('order.0.dir', 'asc');
+    
+            // Ensure the column index exists in the columns array to avoid errors
+            if (isset($columns[$columnIndex])) {
+                $query->orderBy($columns[$columnIndex], $sortDirection);
+            }
+        } else {
+            // Default sorting by priority if no specific column is specified
+            $query->orderBy('priority', 'asc');
+        }
+    
+        return DataTables::of($query)
+            ->addColumn('actions', function ($task) {
+                $editUrl = route('tasks.edit', $task->id);
+                $deleteUrl = route('tasks.destroy', $task->id);
+    
+                return view('tasks.partials.actions', compact('editUrl', 'deleteUrl', 'task'))->render();
+            })
+            ->rawColumns(['actions']) // Render HTML in 'actions' column
+            ->make(true);
+    }
+    
+    // Display form to create a new task
     public function create()
     {
         return view('tasks.create');
     }
 
+    // Store a new task in the database
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -53,12 +77,14 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
     }
 
+    // Show the form to edit an existing task
     public function edit($id)
     {
         $task = Task::findOrFail($id);
         return view('tasks.edit', compact('task'));
     }
 
+    // Update an existing task in the database
     public function update(Request $request, $id)
     {
         $task = Task::findOrFail($id);
@@ -75,6 +101,7 @@ class TaskController extends Controller
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
     }
 
+    // Delete a task from the database
     public function destroy($id)
     {
         Task::destroy($id);
